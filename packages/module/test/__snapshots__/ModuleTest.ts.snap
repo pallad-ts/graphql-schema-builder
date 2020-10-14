@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Module throws error if once of schema builder is not a function or has a shape of builder 1`] = `"One of Graphql schema builders is not a function or has a shape for GraphqlSchemaBuilderShape"`;

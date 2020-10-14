@@ -1,0 +1,25 @@
+{
+  "name": "@pallad/graphql-schema-builder-module",
+  "version": "1.0.0",
+  "description": "Module for graphlq schema builder (via @pallad/modules)",
+  "main": "compiled/index.js",
+  "types": "compiled/index.d.ts",
+  "scripts": {
+    "test": "../../node_modules/.bin/pallad-scripts test",
+    "compile": "../../node_modules/.bin/pallad-scripts compile",
+    "lint": "../../node_modules/.bin/pallad-scripts lint",
+    "prepublishOnly": "npm run compile"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "compiled"
+  ],
+  "dependencies": {
+    "@pallad/graphql-schema-builder": "*",
+    "predicates": "^2.0.3"
+  },
+  "author": "Łukasz Kużyński <lukasz.kuzynski@gmail.com> (http://wookieb.pl)",
+  "license": "MIT"
+}
