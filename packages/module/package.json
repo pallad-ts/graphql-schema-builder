@@ -17,7 +17,7 @@
     "compiled"
   ],
   "dependencies": {
-    "@pallad/graphql-schema-builder": "^1.0.1",
+    "@pallad/graphql-schema-builder": "^1.0.0",
     "predicates": "^2.0.3"
   },
   "author": "Łukasz Kużyński <lukasz.kuzynski@gmail.com> (http://wookieb.pl)",
