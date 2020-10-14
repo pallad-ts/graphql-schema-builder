@@ -1,6 +1,6 @@
 {
   "name": "@pallad/graphql-schema-builder-module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Module for graphlq schema builder (via @pallad/modules)",
   "main": "compiled/index.js",
   "types": "compiled/index.d.ts",
