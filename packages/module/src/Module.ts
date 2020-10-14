@@ -32,7 +32,7 @@ export class Module extends _Module<{ container: Container }> {
             }
 
             container.definitionWithFactory(References.SCHEMA, async () => {
-                const buildersWithAnnotations: [SchemaBuilder | GraphqlSchemaBuilderShape, Annotation][] = await container.getByAnnotation(annotation.predicate, true);
+                const buildersWithAnnotations: Array<[SchemaBuilder | GraphqlSchemaBuilderShape, Annotation]> = await container.getByAnnotation(annotation.predicate, true);
                 const builders = buildersWithAnnotations.sort(([, ann1], [, ann2]) => {
                     return ann1.order - ann2.order;
                 })

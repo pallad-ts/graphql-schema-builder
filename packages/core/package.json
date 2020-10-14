@@ -1,6 +1,6 @@
 {
   "name": "@pallad/graphql-schema-builder",
-  "version": "1.0.1",
+  "version": "0.0.0",
   "description": "Graphql schema builder based on graphql-compose",
   "main": "compiled/index.js",
   "types": "compiled/index.d.ts",
@@ -20,5 +20,6 @@
   "license": "MIT",
   "dependencies": {
     "graphql-compose": "^7.22.1"
-  }
+  },
+  "gitHead": "97b418e12169807c8fd2bb535c121f7c8ef0cc7b"
 }

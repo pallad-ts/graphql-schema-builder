@@ -1,6 +1,6 @@
 {
   "name": "@pallad/graphql-schema-builder-module",
-  "version": "1.0.1",
+  "version": "0.0.0",
   "description": "Module for graphlq schema builder (via @pallad/modules)",
   "main": "compiled/index.js",
   "types": "compiled/index.d.ts",
@@ -21,5 +21,6 @@
     "predicates": "^2.0.3"
   },
   "author": "Łukasz Kużyński <lukasz.kuzynski@gmail.com> (http://wookieb.pl)",
-  "license": "MIT"
+  "license": "MIT",
+  "gitHead": "97b418e12169807c8fd2bb535c121f7c8ef0cc7b"
 }
