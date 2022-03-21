@@ -5,7 +5,6 @@
   "main": "compiled/index.js",
   "types": "compiled/index.d.ts",
   "scripts": {
-    "test": "../../node_modules/.bin/pallad-scripts test",
     "compile": "../../node_modules/.bin/pallad-scripts compile",
     "lint": "../../node_modules/.bin/pallad-scripts lint",
     "prepublishOnly": "npm run compile"
@@ -19,7 +18,7 @@
   "author": "Łukasz Kużyński <lukasz.kuzynski@gmail.com> (http://wookieb.pl)",
   "license": "MIT",
   "dependencies": {
-    "graphql-compose": "^7.22.1"
+    "graphql-compose": "^9"
   },
   "gitHead": "97b418e12169807c8fd2bb535c121f7c8ef0cc7b"
 }
