@@ -1,7 +1,9 @@
-import {Inject, reference} from "alpha-dic";
-import {References} from "./References";
+import {Inject} from "alpha-dic";
+import {referenceForStack} from "./GraphQLSchemaStackAnnotation";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function InjectGraphqlSchema() {
-	return Inject(reference(References.SCHEMA));
+export function InjectGraphqlSchema(stack?: string) {
+	return Inject(
+		referenceForStack(stack)
+	);
 }

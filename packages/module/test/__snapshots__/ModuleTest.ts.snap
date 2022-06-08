@@ -1,3 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Module creates definitions for only defined stacks 1`] = `"No matching service for following lookup: by annotation predicate"`;
+
 exports[`Module throws error if once of schema builder is not a function or has a shape of builder 1`] = `"One of Graphql schema builders is not a function or has a shape for GraphqlSchemaBuilderShape"`;

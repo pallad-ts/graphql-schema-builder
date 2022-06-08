@@ -1,55 +1,82 @@
 import {Module as _Module, StandardActions} from '@pallad/modules';
 import {Container} from "alpha-dic";
-import {References} from "./References";
 import {buildSchema, SchemaBuilder, SchemaComposer} from "@pallad/graphql-schema-builder";
-import {annotation, Annotation} from "./annotation";
 import * as is from 'predicates';
-import {TypeRef} from "alpha-dic/compiled/TypeRef";
 import {GraphqlSchemaBuilderShape} from "./GraphqlSchemaBuilderShape";
+import {graphQLSchemaStackAnnotation, referenceForStack} from "./GraphQLSchemaStackAnnotation";
+import {graphQLSchemaBuilderAnnotation, GraphQLSchemaBuilderAnnotation} from "./GraphQLSchemaBuilderAnnotation";
 
 
 const isBuilderShape = is.struct({
-    build: is.func
+	build: is.func
 });
 
 function hasBuilderShape(value: any): value is GraphqlSchemaBuilderShape {
-    return isBuilderShape(value);
+	return isBuilderShape(value);
+}
+
+function getSchemaBuilderAnnotationPredicateForStack(stack?: string) {
+	if (stack) {
+		return graphQLSchemaBuilderAnnotation.andPredicate(x => {
+			return (!!x.stack && x.stack.includes(stack)) || x.stack === undefined;
+		})
+	}
+	return graphQLSchemaBuilderAnnotation.predicate
 }
 
 export class Module extends _Module<{ container: Container }> {
-    constructor(private schemaComposer?: SchemaComposer<any>) {
-        super('@pallad/graphql-schema-builder-module');
-    }
+	constructor(private options?: Module.Options) {
+		super('@pallad/graphql-schema-builder-module');
+	}
 
-    init() {
-        this.registerAction(StandardActions.INITIALIZATION, ({container}) => {
-            let typeRef = TypeRef.createFromType(SchemaComposer)!;
-            if (this.schemaComposer) {
-                const typeRefFromValue = TypeRef.createFromValue(this.schemaComposer);
-                if (typeRefFromValue) {
-                    typeRef = typeRefFromValue;
-                }
-            }
+	init() {
+		this.registerAction(StandardActions.INITIALIZATION, ({container}) => {
 
-            container.definitionWithFactory(References.SCHEMA, async () => {
-                const buildersWithAnnotations: Array<[SchemaBuilder | GraphqlSchemaBuilderShape, Annotation]> = await container.getByAnnotation(annotation.predicate, true);
-                const builders = buildersWithAnnotations.sort(([, ann1], [, ann2]) => {
-                    return ann1.order - ann2.order;
-                })
-                    .map(([builder]) => {
-                        if (is.func(builder)) {
-                            return builder;
-                        }
+			const stacks = this.getStacksToInitialize();
 
-                        if (hasBuilderShape(builder)) {
-                            return builder.build.bind(builder);
-                        }
+			for (const stack of stacks) {
+				container.definitionWithFactory(async () => {
+					const buildersAnnotationPredicate = getSchemaBuilderAnnotationPredicateForStack(stack);
+					const buildersWithAnnotations: Array<[SchemaBuilder | GraphqlSchemaBuilderShape, GraphQLSchemaBuilderAnnotation]> =
+						await container.getByAnnotation(buildersAnnotationPredicate, true);
+					const builders = buildersWithAnnotations.sort(([, ann1], [, ann2]) => {
+						return ann1.order - ann2.order;
+					})
+						.map(([builder]) => {
+							if (is.func(builder)) {
+								return builder;
+							}
 
-                        throw new Error('One of Graphql schema builders is not a function or has a shape for GraphqlSchemaBuilderShape');
-                    });
-                return buildSchema(builders, this.schemaComposer);
-            })
-                .markType(typeRef);
-        });
-    }
+							if (hasBuilderShape(builder)) {
+								return builder.build.bind(builder);
+							}
+
+							throw new Error('One of Graphql schema builders is not a function or has a shape for GraphqlSchemaBuilderShape');
+						});
+					return buildSchema(builders, this.options?.baseSchemaComposer || new SchemaComposer());
+				})
+					.annotate(graphQLSchemaStackAnnotation(stack))
+			}
+		});
+	}
+
+	private getStacksToInitialize(): Array<string | undefined> {
+		if (this.options?.stacks) {
+			return this.options.stacks;
+		}
+
+		return [undefined];
+	}
+
+	static getSchemaForStack(container: Container, stack?: string) {
+		const reference = referenceForStack(stack);
+		return reference.getArgument(container);
+	}
+}
+
+export namespace Module {
+	export interface Options {
+		baseSchemaComposer?: SchemaComposer<any>;
+		stacks?: string[];
+	}
 }

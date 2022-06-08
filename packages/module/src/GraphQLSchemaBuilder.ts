@@ -1,3 +1,3 @@
-import {annotation} from "./annotation";
+import {graphQLSchemaBuilderAnnotation} from "./GraphQLSchemaBuilderAnnotation";
 
-export const GraphQLSchemaBuilder = annotation.decorator;
+export const GraphQLSchemaBuilder = graphQLSchemaBuilderAnnotation.decorator;
