@@ -1,9 +1,9 @@
-import {Engine, StandardActions} from "@pallad/modules";
-import {Container} from "@pallad/container
-import {Module} from "@src/Module";
+import { Engine, StandardActions } from "@pallad/modules";
+import { Container, Definition } from "@pallad/container";
+import { Module } from "@src/Module";
 import * as sinon from "sinon";
-import {SchemaComposer} from "@pallad/graphql-schema-builder";
-import {graphQLSchemaBuilderAnnotation} from "@src/GraphQLSchemaBuilderAnnotation";
+import { SchemaComposer } from "@pallad/graphql-schema-builder";
+import { graphQLSchemaBuilderAnnotation } from "@src/GraphQLSchemaBuilderAnnotation";
 
 describe("Module", () => {
 	let schemaBuilder1: sinon.SinonStub;
@@ -13,8 +13,8 @@ describe("Module", () => {
 	let engine: Engine<{ container: Container }>;
 
 	beforeEach(() => {
-		container = create();
-		engine = new Engine({container});
+		container = new Container();
+		engine = new Engine({ container });
 		schemaBuilder1 = sinon.stub();
 		schemaBuilder2 = {
 			build: sinon.stub(),
@@ -22,17 +22,23 @@ describe("Module", () => {
 
 		schemaBuilder3 = sinon.stub();
 
-		container
-			.definitionWithValue(schemaBuilder1)
-			.annotate(graphQLSchemaBuilderAnnotation({order: 100}));
+		container.registerDefinition(
+			Definition.useValue(schemaBuilder1).annotate(
+				graphQLSchemaBuilderAnnotation({ order: 100 }),
+			),
+		);
 
-		container
-			.definitionWithValue(schemaBuilder2)
-			.annotate(graphQLSchemaBuilderAnnotation());
+		container.registerDefinition(
+			Definition.useValue(schemaBuilder2).annotate(
+				graphQLSchemaBuilderAnnotation(),
+			),
+		);
 
-		container
-			.definitionWithValue(schemaBuilder3)
-			.annotate(graphQLSchemaBuilderAnnotation({order: -10}));
+		container.registerDefinition(
+			Definition.useValue(schemaBuilder3).annotate(
+				graphQLSchemaBuilderAnnotation({ order: -10 }),
+			),
+		);
 	});
 
 	it("basic test", async () => {
@@ -82,9 +88,11 @@ describe("Module", () => {
 	});
 
 	it("throws error if once of schema builder is not a function or has a shape of builder", async () => {
-		container
-			.definitionWithValue({foo: "bar"})
-			.annotate(graphQLSchemaBuilderAnnotation());
+		container.registerDefinition(
+			Definition.useValue({ foo: "bar" }).annotate(
+				graphQLSchemaBuilderAnnotation(),
+			),
+		);
 
 		engine.registerModule(new Module());
 		await engine.runAction(StandardActions.INITIALIZATION);
@@ -122,24 +130,32 @@ describe("Module", () => {
 			}),
 		);
 		const schemaBuilder1 = sinon.stub();
-		container
-			.definitionWithValue(schemaBuilder1)
-			.annotate(graphQLSchemaBuilderAnnotation({stack: "zee"}));
+		container.registerDefinition(
+			Definition.useValue(schemaBuilder1).annotate(
+				graphQLSchemaBuilderAnnotation({ stack: "zee" }),
+			),
+		);
 
 		const schemaBuilder2 = sinon.stub();
-		container
-			.definitionWithValue(schemaBuilder2)
-			.annotate(graphQLSchemaBuilderAnnotation({stack: "foo"}));
+		container.registerDefinition(
+			Definition.useValue(schemaBuilder2).annotate(
+				graphQLSchemaBuilderAnnotation({ stack: "foo" }),
+			),
+		);
 
 		const schemaBuilder3 = sinon.stub();
-		container
-			.definitionWithValue(schemaBuilder3)
-			.annotate(graphQLSchemaBuilderAnnotation({stack: "foo"}));
+		container.registerDefinition(
+			Definition.useValue(schemaBuilder3).annotate(
+				graphQLSchemaBuilderAnnotation({ stack: "foo" }),
+			),
+		);
 
 		const allSchemaBuilder = sinon.stub();
-		container
-			.definitionWithValue(allSchemaBuilder)
-			.annotate(graphQLSchemaBuilderAnnotation());
+		container.registerDefinition(
+			Definition.useValue(allSchemaBuilder).annotate(
+				graphQLSchemaBuilderAnnotation(),
+			),
+		);
 
 		await engine.runAction(StandardActions.INITIALIZATION);
 
