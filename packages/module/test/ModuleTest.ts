@@ -1,12 +1,11 @@
 import {Engine, StandardActions} from "@pallad/modules";
-import {Container, create} from "alpha-dic";
+import {Container} from "@pallad/container
 import {Module} from "@src/Module";
-import * as sinon from 'sinon';
+import * as sinon from "sinon";
 import {SchemaComposer} from "@pallad/graphql-schema-builder";
 import {graphQLSchemaBuilderAnnotation} from "@src/GraphQLSchemaBuilderAnnotation";
 
-describe('Module', () => {
-
+describe("Module", () => {
 	let schemaBuilder1: sinon.SinonStub;
 	let schemaBuilder2: { build: sinon.SinonStub };
 	let schemaBuilder3: sinon.SinonStub;
@@ -18,142 +17,135 @@ describe('Module', () => {
 		engine = new Engine({container});
 		schemaBuilder1 = sinon.stub();
 		schemaBuilder2 = {
-			build: sinon.stub()
+			build: sinon.stub(),
 		};
 
 		schemaBuilder3 = sinon.stub();
 
-		container.definitionWithValue(schemaBuilder1)
+		container
+			.definitionWithValue(schemaBuilder1)
 			.annotate(graphQLSchemaBuilderAnnotation({order: 100}));
 
-		container.definitionWithValue(schemaBuilder2)
+		container
+			.definitionWithValue(schemaBuilder2)
 			.annotate(graphQLSchemaBuilderAnnotation());
 
-		container.definitionWithValue(schemaBuilder3)
+		container
+			.definitionWithValue(schemaBuilder3)
 			.annotate(graphQLSchemaBuilderAnnotation({order: -10}));
-	})
+	});
 
-	it('basic test', async () => {
+	it("basic test", async () => {
 		engine.registerModule(new Module());
 		await engine.runAction(StandardActions.INITIALIZATION);
 		const result = await Module.getSchemaForStack(container);
 
 		const schemaComposerMatch = sinon.match.instanceOf(SchemaComposer);
-		sinon.assert.calledWithMatch(
-			schemaBuilder1,
-			schemaComposerMatch
-		);
+		sinon.assert.calledWithMatch(schemaBuilder1, schemaComposerMatch);
 
-		sinon.assert.calledWithMatch(
-			schemaBuilder2.build,
-			schemaComposerMatch
-		);
+		sinon.assert.calledWithMatch(schemaBuilder2.build, schemaComposerMatch);
 
-		sinon.assert.calledWithMatch(
-			schemaBuilder3,
-			schemaComposerMatch
-		);
+		sinon.assert.calledWithMatch(schemaBuilder3, schemaComposerMatch);
 
 		sinon.assert.callOrder(
 			schemaBuilder3,
 			schemaBuilder2.build,
-			schemaBuilder1
+			schemaBuilder1,
 		);
 
-		expect(result)
-			.toBeInstanceOf(SchemaComposer);
+		expect(result).toBeInstanceOf(SchemaComposer);
 	});
 
-	it('custom schema composer', async () => {
+	it("custom schema composer", async () => {
 		const composer = new SchemaComposer();
-		engine.registerModule(new Module({
-			baseSchemaComposer: composer
-		}));
+		engine.registerModule(
+			new Module({
+				baseSchemaComposer: composer,
+			}),
+		);
 		await engine.runAction(StandardActions.INITIALIZATION);
 		const result = await Module.getSchemaForStack(container);
 
-		sinon.assert.calledWithExactly(
-			schemaBuilder1,
-			composer
-		);
+		sinon.assert.calledWithExactly(schemaBuilder1, composer);
 
-		sinon.assert.calledWithExactly(
-			schemaBuilder2.build,
-			composer
-		);
+		sinon.assert.calledWithExactly(schemaBuilder2.build, composer);
 
-		sinon.assert.calledWithExactly(
-			schemaBuilder3,
-			composer
-		);
+		sinon.assert.calledWithExactly(schemaBuilder3, composer);
 
 		sinon.assert.callOrder(
 			schemaBuilder3,
 			schemaBuilder2.build,
-			schemaBuilder1
+			schemaBuilder1,
 		);
 
-		expect(result)
-			.toStrictEqual(composer);
+		expect(result).toStrictEqual(composer);
 	});
 
-	it('throws error if once of schema builder is not a function or has a shape of builder', async () => {
-		container.definitionWithValue({foo: 'bar'})
+	it("throws error if once of schema builder is not a function or has a shape of builder", async () => {
+		container
+			.definitionWithValue({foo: "bar"})
 			.annotate(graphQLSchemaBuilderAnnotation());
 
 		engine.registerModule(new Module());
 		await engine.runAction(StandardActions.INITIALIZATION);
 
-		return expect(Module.getSchemaForStack(container))
-			.rejects
-			.toThrowErrorMatchingSnapshot();
+		return expect(
+			Module.getSchemaForStack(container),
+		).rejects.toThrowErrorMatchingSnapshot();
 	});
 
-	it('creates definitions for only defined stacks', async () => {
-		engine.registerModule(new Module({
-			stacks: ['foo', 'bar']
-		}));
+	it("creates definitions for only defined stacks", async () => {
+		engine.registerModule(
+			new Module({
+				stacks: ["foo", "bar"],
+			}),
+		);
 		await engine.runAction(StandardActions.INITIALIZATION);
 
-		await expect(Module.getSchemaForStack(container, 'foo'))
-			.resolves
-			.toBeTruthy();
+		await expect(
+			Module.getSchemaForStack(container, "foo"),
+		).resolves.toBeTruthy();
 
-		await expect(Module.getSchemaForStack(container, 'bar'))
-			.resolves
-			.toBeTruthy();
+		await expect(
+			Module.getSchemaForStack(container, "bar"),
+		).resolves.toBeTruthy();
 
 		expect(() => {
-			Module.getSchemaForStack(container, 'zee');
-		})
-			.toThrowErrorMatchingSnapshot();
+			Module.getSchemaForStack(container, "zee");
+		}).toThrowErrorMatchingSnapshot();
 	});
 
-	it('takes only schema builders that are suitable for given stack', async () => {
-		engine.registerModule(new Module({
-			stacks: ['foo', 'bar']
-		}));
+	it("takes only schema builders that are suitable for given stack", async () => {
+		engine.registerModule(
+			new Module({
+				stacks: ["foo", "bar"],
+			}),
+		);
 		const schemaBuilder1 = sinon.stub();
-		container.definitionWithValue(schemaBuilder1)
-			.annotate(graphQLSchemaBuilderAnnotation({stack: 'zee'}))
+		container
+			.definitionWithValue(schemaBuilder1)
+			.annotate(graphQLSchemaBuilderAnnotation({stack: "zee"}));
 
 		const schemaBuilder2 = sinon.stub();
-		container.definitionWithValue(schemaBuilder2)
-			.annotate(graphQLSchemaBuilderAnnotation({stack: 'foo'}))
+		container
+			.definitionWithValue(schemaBuilder2)
+			.annotate(graphQLSchemaBuilderAnnotation({stack: "foo"}));
 
 		const schemaBuilder3 = sinon.stub();
-		container.definitionWithValue(schemaBuilder3)
-			.annotate(graphQLSchemaBuilderAnnotation({stack: 'foo'}))
+		container
+			.definitionWithValue(schemaBuilder3)
+			.annotate(graphQLSchemaBuilderAnnotation({stack: "foo"}));
 
-		const allSchemaBuilder = sinon.stub()
-		container.definitionWithValue(allSchemaBuilder)
-			.annotate(graphQLSchemaBuilderAnnotation())
+		const allSchemaBuilder = sinon.stub();
+		container
+			.definitionWithValue(allSchemaBuilder)
+			.annotate(graphQLSchemaBuilderAnnotation());
 
 		await engine.runAction(StandardActions.INITIALIZATION);
 
-		await expect(Module.getSchemaForStack(container, 'foo'))
-			.resolves
-			.toBeTruthy();
+		await expect(
+			Module.getSchemaForStack(container, "foo"),
+		).resolves.toBeTruthy();
 
 		sinon.assert.notCalled(schemaBuilder1);
 		sinon.assert.calledOnce(schemaBuilder2);

@@ -1,5 +1,5 @@
 import {SchemaComposer} from "graphql-compose";
 
-export interface SchemaBuilder {
-    (composer: SchemaComposer<any>): Promise<void> | void;
+export interface SchemaBuilder<T extends SchemaComposer<any>> {
+	(composer: T): Promise<void> | void;
 }

@@ -1,4 +1,4 @@
-import {Service, ServiceName} from "alpha-dic";
+import {Service, ServiceName} from "@pallad/container";
 import {GraphQLSchemaBuilder} from "./GraphQLSchemaBuilder";
 import {AnnotationOptions} from "./GraphQLSchemaBuilderAnnotation";
 

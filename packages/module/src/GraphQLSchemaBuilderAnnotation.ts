@@ -1,4 +1,4 @@
-import {createAnnotationFactory} from "alpha-dic";
+import {createAnnotationFactory} from "@pallad/container";
 
 export interface AnnotationOptions {
 	stack?: string | string[],

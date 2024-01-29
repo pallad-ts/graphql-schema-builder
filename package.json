@@ -3,11 +3,13 @@
   "private": true,
   "devDependencies": {
     "@pallad/modules": "^1.2.0",
-    "@pallad/scripts": "^2",
-    "@types/sinon": "^7.0.13",
-    "alpha-dic": "^3.1.0",
-    "graphql": "^16",
-    "lerna": "^4",
-    "sinon": "^9"
-  }
+    "@pallad/scripts": "^3",
+    "@types/sinon": "^17",
+    "prettier": "^3.2.4",
+    "lerna": "^8",
+    "sinon": "^17"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

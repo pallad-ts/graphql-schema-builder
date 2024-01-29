@@ -1,5 +1,5 @@
 import {SchemaComposer} from "@pallad/graphql-schema-builder";
 
-export interface GraphqlSchemaBuilderShape {
-    build(schemaComposer: SchemaComposer<any>): Promise<void> | void;
+export interface GraphqlSchemaBuilderShape<T extends SchemaComposer<any>> {
+	build(schemaComposer: T): Promise<void> | void;
 }

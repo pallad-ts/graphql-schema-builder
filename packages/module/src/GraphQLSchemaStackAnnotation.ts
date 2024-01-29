@@ -1,16 +1,16 @@
-import {createAnnotationFactory, reference} from "alpha-dic";
+import {createAnnotationFactory, reference} from "@pallad/container";
 
 export const graphQLSchemaStackAnnotation = createAnnotationFactory(
 	'graphql-schema-builder-stack',
 	(stack?: string) => ({stack})
 );
 
-export function referenceForStack(stack?: string) {
+export function referenceForStack<T extends string>(stack?: T) {
 	return reference.annotation(
 		graphQLSchemaStackAnnotation
 			.andPredicate(
 				annotation => annotation.stack === stack
-			)
+			) as (value: unknown) => value is (GraphQLSchemaStackAnnotation & { stack: T })
 	);
 }
 
